@@ -310,29 +310,29 @@ int BinarySearchTree::IterativeTreeSearch(int data, Node *pointer)
         else
             return node->data;
     }
+}
 
-    // Insertion
-    void BinarySearchTree::Insert(int data)
+// Insertion
+void BinarySearchTree::Insert(int data)
+{
+    Node *node = NewNode(data);
+    Node *y = NULL;
+    Node *x = this->root;
+    while (x != NULL)
     {
-        Node *node = NewNode(data);
-        Node *y = NULL;
-        Node *x = this->root;
-        while (x != NULL)
-        {
-            y = x;
-            if (node->data < x->data)
-                x = x->left;
-            else
-                x = x->right;
-        }
-        node->parent = y;
-        if (y == NULL)
-            this->root = node;
-        else if (node->data < y->data)
-            y->left = node;
+        y = x;
+        if (node->data < x->data)
+            x = x->left;
         else
-            y->right = node;
+            x = x->right;
     }
+    node->parent = y;
+    if (y == NULL)
+        this->root = node;
+    else if (node->data < y->data)
+        y->left = node;
+    else
+        y->right = node;
 }
 
 #endif
