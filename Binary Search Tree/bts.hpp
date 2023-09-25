@@ -32,6 +32,9 @@ private:
     void Preorder(Node *node);
     void Postorder(Node *node);
 
+    // Create new node
+    Node *NewNode(int data);
+
 public:
     // Constructors
     BinarySearchTree();          // default constructor
@@ -111,6 +114,17 @@ void BinarySearchTree::Postorder(Node *node)
         Postorder(node->right);
         std::cout << node->data << " ";
     }
+}
+
+// Create new node
+Node *BinarySearchTree::NewNode(int data)
+{
+    Node *node = new Node;
+    node->data = data;
+    node->left = NULL;
+    node->right = NULL;
+    node->parent = NULL;
+    return node;
 }
 
 // Size getter
@@ -295,6 +309,29 @@ int BinarySearchTree::IterativeTreeSearch(int data, Node *pointer)
         }
         else
             return node->data;
+    }
+
+    // Insertion
+    void BinarySearchTree::Insert(int data)
+    {
+        Node *node = NewNode(data);
+        Node *y = NULL;
+        Node *x = this->root;
+        while (x != NULL)
+        {
+            y = x;
+            if (node->data < x->data)
+                x = x->left;
+            else
+                x = x->right;
+        }
+        node->parent = y;
+        if (y == NULL)
+            this->root = node;
+        else if (node->data < y->data)
+            y->left = node;
+        else
+            y->right = node;
     }
 }
 
