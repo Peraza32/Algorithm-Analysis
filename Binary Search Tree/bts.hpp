@@ -39,8 +39,8 @@ private:
 
 public:
     // Constructors
-    BinarySearchTree();          // default constructor
-    BinarySearchTree(int *data); // constructor from an array of integers
+    BinarySearchTree();                    // default constructor
+    BinarySearchTree(int *data, int size); // constructor from an array of integers
 
     // Methods
 
@@ -72,11 +72,11 @@ BinarySearchTree::BinarySearchTree()
     _size = 0;
 }
 
-BinarySearchTree::BinarySearchTree(int *data)
+BinarySearchTree::BinarySearchTree(int *data, int size)
 {
     root = NULL;
-    _size = 0;
-    for (int i = 0; i < sizeof(data) / sizeof(data[0]); i++)
+    _size = size;
+    for (int i = 0; i < size; i++)
     {
         Insert(data[i]);
     }
@@ -380,15 +380,34 @@ void BinarySearchTree::Delete(int data)
         return;
     }
 
+    // Node has no children
+    if (node->left == nullptr && node->right == nullptr)
+    {
+        if (node->parent == nullptr)
+            root = nullptr;
+        else if (node == node->parent->left)
+            node->parent->left = nullptr;
+        else
+            node->parent->right = nullptr;
+
+        delete node;
+    }
+
     Node *y = NULL;
     if (node->left == NULL)
+    {
         Transplant(node, node->right);
+        delete node;
+    }
     else if (node->right == NULL)
+    {
         Transplant(node, node->left);
+        delete node;
+    }
     else
     {
         y = Minimum(node->right->data);
-        if( y != node->right)
+        if (y != node->right)
         {
             Transplant(y, y->right);
             y->right = node->right;
@@ -397,6 +416,39 @@ void BinarySearchTree::Delete(int data)
         Transplant(node, y);
         y->left = node->left;
         y->left->parent = y;
+        delete node;
+    }
+}
+
+// Display
+void BinarySearchTree::Display(int order = 1)
+{
+    if (this->root == NULL)
+    {
+        std::cout << "The tree is empty" << std::endl;
+        return;
+    }
+    else
+    {
+        switch (order)
+        {
+        case 1:
+            Inorder(this->root);
+            std::cout << std::endl;
+            break;
+        case 2:
+            Preorder(this->root);
+            std::cout << std::endl;
+            break;
+        case 3:
+            Postorder(this->root);
+            std::cout << std::endl;
+            break;
+        default:
+            std::cout << "The provided order is not valid" << std::endl;
+            break;
+        }
+        std::cout << std::endl;
     }
 }
 
