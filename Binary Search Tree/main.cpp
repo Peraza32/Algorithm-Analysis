@@ -28,5 +28,22 @@ int main()
     tree2->Display(2);
     tree2->Display(3);
 
+    cout << "-------------------" << endl;
+    // Search for a value
+    int value = 0;
+    cout << "Enter a value to search for: ";
+    cin >> value;
+    cout << "-------------------" << endl;
+    if (tree->TreeSearch(value)) 
+    {
+        cout << "Found " << value << endl;
+    }
+    else
+    {
+        cout << "Not found " << value << endl;
+    }
+
+    
+
     return 0;
 }

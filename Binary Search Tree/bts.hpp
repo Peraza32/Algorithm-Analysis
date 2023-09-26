@@ -48,14 +48,14 @@ public:
     int Size();
 
     // Queries
-    Node *Minimum(int data);                          // returns the minimum value in the tree
-    Node *Maximum();                                  // returns the maximum value in the tree
-    Node *Exist(int data);                            // check if a node with the given data exists in the tree
-    int Successor(int data);                          // returns the successor of the node with the given data
-    int Predecessor(int data);                        // returns the predecessor of the node with the given data
-    int TreeSearch(int data, Node *pointer);          // returns the node with the given data
-    int IterativeTreeSearch(int data, Node *pointer); // returns the node with the given data in a non recursive way
-    void Display(int order);                          // displays the tree in the given order, the order can be 1 for inorder, 2 for preorder and 3 for postorder
+    Node *Minimum(int data);                            // returns the minimum value in the tree
+    Node *Maximum();                                    // returns the maximum value in the tree
+    Node *Exist(int data);                              // check if a node with the given data exists in the tree
+    int Successor(int data);                            // returns the successor of the node with the given data
+    int Predecessor(int data);                          // returns the predecessor of the node with the given data
+    Node *TreeSearch(int data, Node *pointer);          // returns the node with the given data
+    Node *IterativeTreeSearch(int data, Node *pointer); // returns the node with the given data in a non recursive way
+    void Display(int order);                            // displays the tree in the given order, the order can be 1 for inorder, 2 for preorder and 3 for postorder
 
     // Insertion
     void Insert(int data);
@@ -289,12 +289,12 @@ int BinarySearchTree::Predecessor(int data)
 }
 
 // TreeSearch
-int BinarySearchTree::TreeSearch(int data, Node *pointer)
+Node *BinarySearchTree::TreeSearch(int data, Node *pointer = nullptr)
 {
     if (this->root == NULL)
     {
         std::cout << "The tree is empty" << std::endl;
-        return -1;
+        return nullptr;
     }
     else
     {
@@ -302,10 +302,10 @@ int BinarySearchTree::TreeSearch(int data, Node *pointer)
         if (node == NULL)
         {
             std::cout << "The element is not in the tree" << std::endl;
-            return -1;
+            return nullptr;
         }
         else if (node->data == data)
-            return node->data;
+            return node;
         else if (data < node->data)
             return TreeSearch(data, node->left);
         else
@@ -314,12 +314,12 @@ int BinarySearchTree::TreeSearch(int data, Node *pointer)
 }
 
 // IterativeTreeSearch
-int BinarySearchTree::IterativeTreeSearch(int data, Node *pointer)
+Node *BinarySearchTree::IterativeTreeSearch(int data, Node *pointer)
 {
     if (this->root == NULL)
     {
         std::cout << "The tree is empty" << std::endl;
-        return -1;
+        return nullptr;
     }
     else
     {
@@ -334,10 +334,10 @@ int BinarySearchTree::IterativeTreeSearch(int data, Node *pointer)
         if (node == NULL)
         {
             std::cout << "The element is not in the tree" << std::endl;
-            return -1;
+            return nullptr;
         }
         else
-            return node->data;
+            return node;
     }
 }
 
