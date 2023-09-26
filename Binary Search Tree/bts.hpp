@@ -34,6 +34,8 @@ private:
 
     // Create new node
     Node *NewNode(int data);
+    // Transplant
+    void Transplant(Node *u, Node *v);
 
 public:
     // Constructors
@@ -46,8 +48,8 @@ public:
     int Size();
 
     // Queries
-    int Minimum();                                    // returns the minimum value in the tree
-    int Maximum();                                    // returns the maximum value in the tree
+    Node *Minimum(int data);                          // returns the minimum value in the tree
+    Node *Maximum();                                  // returns the maximum value in the tree
     Node *Exist(int data);                            // check if a node with the given data exists in the tree
     int Successor(int data);                          // returns the successor of the node with the given data
     int Predecessor(int data);                        // returns the predecessor of the node with the given data
@@ -127,6 +129,27 @@ Node *BinarySearchTree::NewNode(int data)
     return node;
 }
 
+// Transplant
+void BinarySearchTree::Transplant(Node *u, Node *v)
+{
+    if (u->parent == NULL)
+    {
+        this->root = v;
+    }
+    else if (u == u->parent->left)
+    {
+        u->parent->left = v;
+    }
+    else
+    {
+        u->parent->right = v;
+    }
+    if (v != NULL)
+    {
+        v->parent = u->parent;
+    }
+}
+
 // Size getter
 int BinarySearchTree::Size()
 {
@@ -135,32 +158,38 @@ int BinarySearchTree::Size()
 
 // Queries
 // Minimum
-int BinarySearchTree::Minimum()
+Node *BinarySearchTree::Minimum(int data)
 {
     if (this->root == NULL)
     {
         std::cout << "The tree is empty" << std::endl;
-        return -1;
+        return nullptr;
     }
     else
     {
-        Node *min = this->root;
+        Node *min = Exist(data);
+
+        if (min == NULL)
+        {
+            std::cout << "The provided data is not in the tree" << std::endl;
+            return nullptr;
+        }
         while (min->left != NULL)
         {
             min = min->left;
         }
 
-        return min->data;
+        return min;
     }
 }
 
 // Maximum
-int BinarySearchTree::Maximum()
+Node *BinarySearchTree::Maximum()
 {
     if (this->root == NULL)
     {
         std::cout << "The tree is empty" << std::endl;
-        return -1;
+        return nullptr;
     }
     else
     {
@@ -169,7 +198,7 @@ int BinarySearchTree::Maximum()
         {
             max = max->right;
         }
-        return max->data;
+        return max;
     }
 }
 
@@ -192,7 +221,7 @@ Node *BinarySearchTree::Exist(int data)
             node = node->right;
         }
     }
-    return false;
+    return nullptr;
 }
 
 // Successor
@@ -333,6 +362,42 @@ void BinarySearchTree::Insert(int data)
         y->left = node;
     else
         y->right = node;
+}
+
+// Deletion
+void BinarySearchTree::Delete(int data)
+{
+    if (this->root == NULL)
+    {
+        std::cout << "The tree is empty" << std::endl;
+        return;
+    }
+    Node *node = Exist(data);
+
+    if (node == NULL)
+    {
+        std::cout << "The element is not in the tree" << std::endl;
+        return;
+    }
+
+    Node *y = NULL;
+    if (node->left == NULL)
+        Transplant(node, node->right);
+    else if (node->right == NULL)
+        Transplant(node, node->left);
+    else
+    {
+        y = Minimum(node->right->data);
+        if( y != node->right)
+        {
+            Transplant(y, y->right);
+            y->right = node->right;
+            y->right->parent = y;
+        }
+        Transplant(node, y);
+        y->left = node->left;
+        y->left->parent = y;
+    }
 }
 
 #endif
