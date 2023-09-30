@@ -48,12 +48,14 @@ public:
     int Size();
 
     // Queries
-    Node *Minimum(int data);                            // returns the minimum value in the tree
-    Node *Maximum();                                    // returns the maximum value in the tree
-    Node *Exist(int data);                              // check if a node with the given data exists in the tree
-    int Successor(int data);                            // returns the successor of the node with the given data
-    int Predecessor(int data);                          // returns the predecessor of the node with the given data
-    Node *TreeSearch(int data, Node *pointer);          // returns the node with the given data
+    Node *Minimum();
+    Node *Minimum(int data);   // returns the minimum value in the tree
+    Node *Maximum();           // returns the maximum value in the tree
+    Node *Exist(int data);     // check if a node with the given data exists in the tree
+    int Successor(int data);   // returns the successor of the node with the given data
+    int Predecessor(int data); // returns the predecessor of the node with the given data
+    Node *TreeSearch(int data, Node *pointer);
+    Node *TreeSearch(int data);                         // returns the node with the given data
     Node *IterativeTreeSearch(int data, Node *pointer); // returns the node with the given data in a non recursive way
     void Display(int order);                            // displays the tree in the given order, the order can be 1 for inorder, 2 for preorder and 3 for postorder
 
@@ -158,6 +160,26 @@ int BinarySearchTree::Size()
 
 // Queries
 // Minimum
+Node *BinarySearchTree::Minimum()
+{
+    if (this->root == NULL)
+    {
+        std::cout << "The tree is empty" << std::endl;
+        return nullptr;
+    }
+    else
+    {
+        Node *min = this->root;
+
+        while (min->left != NULL)
+        {
+            min = min->left;
+        }
+
+        return min;
+    }
+}
+
 Node *BinarySearchTree::Minimum(int data)
 {
     if (this->root == NULL)
@@ -289,7 +311,8 @@ int BinarySearchTree::Predecessor(int data)
 }
 
 // TreeSearch
-Node *BinarySearchTree::TreeSearch(int data, Node *pointer = nullptr)
+
+Node *BinarySearchTree::TreeSearch(int data)
 {
     if (this->root == NULL)
     {
@@ -298,13 +321,28 @@ Node *BinarySearchTree::TreeSearch(int data, Node *pointer = nullptr)
     }
     else
     {
-        Node *node = (pointer == NULL) ? this->root : pointer;
-        if (node == NULL)
-        {
-            std::cout << "The element is not in the tree" << std::endl;
-            return nullptr;
-        }
-        else if (node->data == data)
+        Node *node = this->root;
+        if (node == NULL || node->data == data)
+            return node;
+        else if (data < node->data)
+            return TreeSearch(data, node->left);
+        else
+            return TreeSearch(data, node->right);
+    }
+}
+
+
+Node *BinarySearchTree::TreeSearch(int data, Node *pointer)
+{
+    if (this->root == NULL)
+    {
+        std::cout << "The tree is empty" << std::endl;
+        return nullptr;
+    }
+    else
+    {
+        Node *node = pointer;
+        if (node == NULL || node->data == data)
             return node;
         else if (data < node->data)
             return TreeSearch(data, node->left);

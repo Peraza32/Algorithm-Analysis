@@ -19,22 +19,24 @@ int main()
         tree->Insert(random);
     }
     // Print the tree
-    tree->Display();
-    tree->Display(2);
-    tree->Display(3);
-    cout << "-------------------" << endl;
-
     tree2->Display();
-    tree2->Display(2);
-    tree2->Display(3);
-
+    // tree->Display(2);
+    // tree->Display(3);
     cout << "-------------------" << endl;
+
+    // tree2->Display();
+    // tree2->Display(2);
+    // tree2->Display(3);
+
+    // cout << "-------------------" << endl;
     // Search for a value
     int value = 0;
     cout << "Enter a value to search for: ";
     cin >> value;
     cout << "-------------------" << endl;
-    if (tree->TreeSearch(value)) 
+
+
+    if (tree2->TreeSearch(value))
     {
         cout << "Found " << value << endl;
     }
@@ -43,7 +45,28 @@ int main()
         cout << "Not found " << value << endl;
     }
 
+    cout << tree2->Maximum()->data << endl;
+
+    cout << tree2->Minimum()->data << endl;
+    // cout << tree->Successor(15);
+    // cout << tree->Predecessor(15);
+
+    cout << "-------------------" << endl;
     
+    // Delete a value
+    cout << "Enter a value to delete: ";
+    cin >> value;
+    cout << "-------------------" << endl;
+    tree2->Delete(value);
+    tree2->Display();
+
+    cout << "-------------------" << endl;
+    // add a value
+    cout << "Enter a value to add: ";
+    cin >> value;
+    cout << "-------------------" << endl;
+    tree2->Insert(value);
+    tree2->Display();
 
     return 0;
 }
