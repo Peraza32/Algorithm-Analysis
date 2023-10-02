@@ -331,7 +331,6 @@ Node *BinarySearchTree::TreeSearch(int data)
     }
 }
 
-
 Node *BinarySearchTree::TreeSearch(int data, Node *pointer)
 {
     if (this->root == NULL)
@@ -416,19 +415,6 @@ void BinarySearchTree::Delete(int data)
     {
         std::cout << "The element is not in the tree" << std::endl;
         return;
-    }
-
-    // Node has no children
-    if (node->left == nullptr && node->right == nullptr)
-    {
-        if (node->parent == nullptr)
-            root = nullptr;
-        else if (node == node->parent->left)
-            node->parent->left = nullptr;
-        else
-            node->parent->right = nullptr;
-
-        delete node;
     }
 
     Node *y = NULL;
