@@ -71,13 +71,30 @@ void Red_Black_Tree::InitNIL()
     NIL->left = NIL->right = NIL->parent = nullptr;
 }
 
-Node * Red_Black_Tree::createNode(int data)
+Node *Red_Black_Tree::createNode(int data)
 {
-    Node * newNode = new Node();
+    Node *newNode = new Node();
     newNode->data = data;
     newNode->color = RED;
     newNode->left = newNode->right = newNode->parent = NIL;
     return newNode;
+}
+
+void Red_Black_Tree::LeftRotation(Node *data)
+{
+    Node *temp = data->right;
+    data->right = temp->left;
+    if (temp->left != NIL)
+        temp->left->parent = data;
+    temp->parent = data->parent;
+    if (data->parent == NIL)
+        this->root = temp;
+    else if (data == data->parent->left)
+        data->parent->left = temp;
+    else
+        data->parent->right = temp;
+    temp->left = data;
+    data->parent = temp;
 }
 
 #endif
