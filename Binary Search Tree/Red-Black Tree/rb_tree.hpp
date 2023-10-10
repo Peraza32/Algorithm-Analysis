@@ -191,6 +191,78 @@ void Red_Black_Tree::FixInsert(Node *data)
     }
 }
 
+// Fix Delete
+
+void Red_Black_Tree::FixDelete(Node *data)
+{
+    Node *sibling;
+    while (data != this->root && data->color == BLACK)
+    {
+        if (data == data->parent->left)
+        {
+            sibling = data->parent->right;
+            if (sibling->color == RED)
+            {
+                sibling->color = BLACK;
+                data->parent->color = RED;
+                this->LeftRotation(data->parent);
+                sibling = data->parent->right;
+            }
+            if (sibling->left->color == BLACK && sibling->right->color == BLACK)
+            {
+                sibling->color = RED;
+                data = data->parent;
+            }
+            else
+            {
+                if (sibling->right->color == BLACK)
+                {
+                    sibling->left->color = BLACK;
+                    sibling->color = RED;
+                    this->RightRotation(sibling);
+                    sibling = data->parent->right;
+                }
+                sibling->color = data->parent->color;
+                data->parent->color = BLACK;
+                sibling->right->color = BLACK;
+                this->LeftRotation(data->parent);
+                data = this->root;
+            }
+        }
+        else
+        {
+            sibling = data->parent->left;
+            if (sibling->color == RED)
+            {
+                sibling->color = BLACK;
+                data->parent->color = RED;
+                this->RightRotation(data->parent);
+                sibling = data->parent->left;
+            }
+            if (sibling->right->color == BLACK && sibling->left->color == BLACK)
+            {
+                sibling->color = RED;
+                data = data->parent;
+            }
+            else
+            {
+                if (sibling->left->color == BLACK)
+                {
+                    sibling->right->color = BLACK;
+                    sibling->color = RED;
+                    this->LeftRotation(sibling);
+                    sibling = data->parent->left;
+                }
+                sibling->color = data->parent->color;
+                data->parent->color = BLACK;
+                sibling->left->color = BLACK;
+                this->RightRotation(data->parent);
+                data = this->root;
+            }
+        }
+    }
+}
+
 // Transplant
 void Red_Black_Tree::Transplant(Node *u, Node *v)
 {
