@@ -36,15 +36,19 @@ private:
 
     // Fix Insert
     void FixInsert(Node *);
+    void FixInsertRefactor(Node *);
 
     // Fix Delete
     void FixDelete(Node *);
+    void FixDeleteRefactor(Node *);
 
     // Transplant
     void Transplant(Node *, Node *);
 
-    // inorder
+    // Order
     void Inorder(Node *);
+    void Postorder(Node *);
+    void Preorder(Node *);
 
 public:
     // Constructor
@@ -64,34 +68,38 @@ public:
     void Delete(int);
 
     // Display
-    void Display();
+    void Display(int);
+
+    // Display Tree Shape
+    void DisplayTreeShape();
 
     // Destructor
     ~Red_Black_Tree();
 };
 
+void Red_Black_Tree::InitNIL()
+{
+    NIL = new Node;
+    NIL->data = INT_MIN;
+    NIL->color = BLACK;
+    NIL->left = NIL->right = NIL->parent = nullptr;
+}
+
 // Constructor
 Red_Black_Tree::Red_Black_Tree()
 {
+    InitNIL();
     this->root = NIL;
     this->_size = 0;
-    InitNIL();
 }
 
 Red_Black_Tree::Red_Black_Tree(int *arr, int size)
 {
+    InitNIL();
     this->root = NIL;
     this->_size = 0;
-    InitNIL();
     for (int i = 0; i < size; i++)
         Insert(arr[i]);
-}
-
-void Red_Black_Tree::InitNIL()
-{
-    NIL = new Node;
-    NIL->color = BLACK;
-    NIL->left = NIL->right = NIL->parent = nullptr;
 }
 
 Node *Red_Black_Tree::createNode(int data)
@@ -139,13 +147,16 @@ void Red_Black_Tree::RightRotation(Node *data)
 
 // Fixes
 //  Fix Insert
+
 void Red_Black_Tree::FixInsert(Node *data)
 {
+    Node *uncle;
     while (data->parent->color == RED)
     {
+
         if (data->parent == data->parent->parent->left)
         {
-            Node *uncle = data->parent->parent->right;
+            uncle = data->parent->parent->right;
             if (uncle->color == RED)
             {
                 data->parent->color = BLACK;
@@ -160,6 +171,7 @@ void Red_Black_Tree::FixInsert(Node *data)
                     data = data->parent;
                     this->LeftRotation(data);
                 }
+
                 data->parent->color = BLACK;
                 data->parent->parent->color = RED;
                 this->RightRotation(data->parent->parent);
@@ -167,9 +179,11 @@ void Red_Black_Tree::FixInsert(Node *data)
         }
         else
         {
-            Node *uncle = data->parent->parent->left;
+
+            uncle = data->parent->parent->left;
             if (uncle->color == RED)
             {
+
                 data->parent->color = BLACK;
                 uncle->color = BLACK;
                 data->parent->parent->color = RED;
@@ -186,9 +200,48 @@ void Red_Black_Tree::FixInsert(Node *data)
                 data->parent->parent->color = RED;
                 this->LeftRotation(data->parent->parent);
             }
+            if (data == root)
+            {
+                break;
+            }
         }
-        this->root->color = BLACK;
     }
+    this->root->color = BLACK;
+}
+
+void Red_Black_Tree::FixInsertRefactor(Node *data)
+{
+    Node *uncle;
+    while (data->parent->color == RED)
+    {
+        bool isLeftChild = (data->parent == data->parent->parent->left);
+
+        uncle = (isLeftChild) ? data->parent->parent->right : data->parent->parent->left;
+
+        if (uncle->color == RED)
+        {
+            data->parent->color = BLACK;
+            uncle->color = BLACK;
+            data->parent->parent->color = RED;
+            data = data->parent->parent;
+        }
+        else
+        {
+            if ((isLeftChild && data == data->parent->right) || (!isLeftChild && data == data->parent->left))
+            {
+                data = data->parent;
+                (isLeftChild) ? this->LeftRotation(data) : this->RightRotation(data);
+            }
+
+            data->parent->color = BLACK;
+            data->parent->parent->color = RED;
+            (isLeftChild) ? this->RightRotation(data->parent->parent) : this->LeftRotation(data->parent->parent);
+        }
+
+        if (data == root)
+            break;
+    }
+    this->root->color = BLACK;
 }
 
 // Fix Delete
@@ -261,6 +314,51 @@ void Red_Black_Tree::FixDelete(Node *data)
             }
         }
     }
+    data->color = BLACK;
+}
+
+// Fix Delete Refactor
+void Red_Black_Tree::FixDeleteRefactor(Node *data)
+{
+    Node *sibling;
+
+    while (data != this->root && data->color == BLACK)
+    {
+        bool isLeftChild = (data == data->parent->left);
+        sibling = (isLeftChild) ? data->parent->right : data->parent->left;
+
+        if (sibling->color == RED)
+        {
+            sibling->color = BLACK;
+            data->parent->color = RED;
+            (isLeftChild) ? this->LeftRotation(data->parent) : this->RightRotation(data->parent);
+            sibling = (isLeftChild) ? data->parent->right : data->parent->left;
+        }
+
+        if (sibling->left->color == BLACK && sibling->right->color == BLACK)
+        {
+            sibling->color = RED;
+            data = data->parent;
+        }
+        else
+        {
+            if ((isLeftChild && sibling->right->color == BLACK) || (!isLeftChild && sibling->left->color == BLACK))
+            {
+                (isLeftChild) ? (sibling->left->color = BLACK) : (sibling->right->color = BLACK);
+                sibling->color = RED;
+                (isLeftChild) ? this->RightRotation(sibling) : this->LeftRotation(sibling);
+                sibling = (isLeftChild) ? data->parent->right : data->parent->left;
+            }
+
+            sibling->color = data->parent->color;
+            data->parent->color = BLACK;
+            (isLeftChild) ? (sibling->right->color = BLACK) : (sibling->left->color = BLACK);
+            (isLeftChild) ? this->LeftRotation(data->parent) : this->RightRotation(data->parent);
+            data = this->root;
+        }
+    }
+
+    data->color = BLACK; // Ensure the root is black
 }
 
 // Transplant
@@ -283,6 +381,28 @@ void Red_Black_Tree::Inorder(Node *data)
         Inorder(data->left);
         std::cout << data->data << " ";
         Inorder(data->right);
+    }
+}
+
+// Postorder
+void Red_Black_Tree::Postorder(Node *data)
+{
+    if (data != NIL)
+    {
+        Postorder(data->left);
+        Postorder(data->right);
+        std::cout << data->data << " ";
+    }
+}
+
+// Preorder
+void Red_Black_Tree::Preorder(Node *data)
+{
+    if (data != NIL)
+    {
+        std::cout << data->data << " ";
+        Preorder(data->left);
+        Preorder(data->right);
     }
 }
 
@@ -315,25 +435,33 @@ Node *Red_Black_Tree::Minimum(Node *node)
 // Insert
 void Red_Black_Tree::Insert(int data)
 {
-    Node *newNode = createNode(data);
-    Node *it = this->root;
-    Node *last_visited = NIL;
-    while (it != NIL)
+    try
     {
-        last_visited = it;
-        if (newNode->data < it->data)
-            it = it->left;
+        Node *newNode = createNode(data);
+        Node *it = this->root;
+        Node *last_visited = NIL;
+        while (it != NIL)
+        {
+            last_visited = it;
+            if (newNode->data < it->data)
+                it = it->left;
+            else
+                it = it->right;
+        }
+        newNode->parent = last_visited;
+        if (last_visited == NIL)
+            this->root = newNode;
+        else if (newNode->data < last_visited->data)
+            last_visited->left = newNode;
         else
-            it = it->right;
+            last_visited->right = newNode;
+        this->FixInsert(newNode);
+        this->_size++;
     }
-    newNode->parent = last_visited;
-    if (last_visited == NIL)
-        this->root = newNode;
-    else if (newNode->data < last_visited->data)
-        last_visited->left = newNode;
-    else
-        last_visited->right = newNode;
-    this->FixInsert(newNode);
+    catch (const std::exception &e)
+    {
+        std::cerr << e.what() << '\n';
+    }
 }
 
 void Red_Black_Tree::Delete(int data)
@@ -388,9 +516,58 @@ void Red_Black_Tree::Delete(int data)
 }
 
 // Display
-void Red_Black_Tree::Display()
+void Red_Black_Tree::Display(int order = 1)
 {
+
+    if (this->root == NULL)
+    {
+        std::cout << "The tree is empty" << std::endl;
+        return;
+    }
+    else
+    {
+        switch (order)
+        {
+        case 1:
+            Inorder(this->root);
+            std::cout << std::endl;
+            break;
+        case 2:
+            Preorder(this->root);
+            std::cout << std::endl;
+            break;
+        case 3:
+            Postorder(this->root);
+            std::cout << std::endl;
+            break;
+        default:
+            std::cout << "The provided order is not valid" << std::endl;
+            break;
+        }
+        std::cout << std::endl;
+    }
+}
+
+// Display Tree Shape
+void Red_Black_Tree::DisplayTreeShape()
+{
+    if (this->root == NIL)
+    {
+        std::cout << "Tree is Empty" << std::endl;
+        return;
+    }
+    std::cout << "Root: " << this->root->data << std::endl;
+    std::cout << "NIL: " << NIL->data << std::endl;
+    std::cout << "Size: " << this->_size << std::endl;
+    std::cout << "Inorder: ";
     Inorder(this->root);
+    std::cout << std::endl;
+    std::cout << "Preorder: ";
+    Preorder(this->root);
+    std::cout << std::endl;
+    std::cout << "Postorder: ";
+    Postorder(this->root);
+    std::cout << std::endl;
 }
 
 #endif
