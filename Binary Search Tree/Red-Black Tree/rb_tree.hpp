@@ -60,14 +60,14 @@ public:
     // Delete
     void Delete(int);
 
-    //Display
+    // Display
     void Display();
 
     // Destructor
     ~Red_Black_Tree();
 };
 
-//Constructor
+// Constructor
 Red_Black_Tree::Red_Black_Tree()
 {
     this->root = NIL;
@@ -143,6 +143,24 @@ void Red_Black_Tree::Inorder(Node *data)
         std::cout << data->data << " ";
         Inorder(data->right);
     }
+}
+
+// Search
+Node *Red_Black_Tree::Search(int data, Node *node = nullptr)
+{
+    if (this->root == NIL)
+    {
+        std::cout << "Tree is Empty" << std::endl;
+        return nullptr;
+    }
+    if (node == nullptr)
+        node = this->root;
+    if (node == NIL || node->data == data)
+        return node;
+    if (data < node->data)
+        return Search(data, node->left);
+    else
+        return Search(data, node->right);
 }
 
 // Display
