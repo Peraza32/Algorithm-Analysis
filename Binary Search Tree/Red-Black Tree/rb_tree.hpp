@@ -54,6 +54,9 @@ public:
     // Search
     Node *Search(int, Node *);
 
+    //Minimum
+    Node *Minimum(Node *);
+
     // Insertion
     void Insert(int);
 
@@ -134,6 +137,18 @@ void Red_Black_Tree::RightRotation(Node *data)
     data->parent = temp;
 }
 
+//Transplant
+void Red_Black_Tree::Transplant(Node *u, Node *v)
+{
+    if (u->parent == NIL)
+        this->root = v;
+    else if (u == u->parent->left)
+        u->parent->left = v;
+    else
+        u->parent->right = v;
+    v->parent = u->parent;
+}
+
 // Inorder
 void Red_Black_Tree::Inorder(Node *data)
 {
@@ -162,6 +177,88 @@ Node *Red_Black_Tree::Search(int data, Node *node = nullptr)
     else
         return Search(data, node->right);
 }
+
+//Minimum
+Node *Red_Black_Tree::Minimum(Node *node)
+{
+    while (node->left != NIL)
+        node = node->left;
+    return node;
+}
+
+
+// Insert
+void Red_Black_Tree::Insert(int data)
+{
+    Node * newNode =createNode(data);
+    Node * it = this->root;
+    Node * last_visited = NIL;
+    while( it != NIL)
+    {
+        last_visited = it;
+        if( newNode->data  < it->data)
+            it = it->left;
+        else
+            it = it->right;
+    }
+    newNode->parent = last_visited;
+    if(last_visited == NIL)
+        this->root = newNode;
+    else if(newNode->data < last_visited->data)
+        last_visited->left = newNode;
+    else 
+        last_visited->right = newNode;
+    this->FixInsert(newNode);   
+}
+
+void Red_Black_Tree::Delete(int data)
+{
+    if(this->root == NIL)
+    {
+        std::cout << "Tree is Empty" << std::endl;
+        return;
+    }
+    Node * toDelete = Search(data);
+    if(toDelete == nullptr)
+    {
+        std::cout << "Element not found" << std::endl;
+        return;
+    }
+    Node * y = toDelete;
+    Node * x;
+    COLOR y_original_color = y->color;
+    if(toDelete->left == NIL)
+    {
+        x = toDelete->right;
+        this->Transplant(toDelete, toDelete->right);
+    }
+    else if(toDelete->right == NIL)
+    {
+        x = toDelete->left;
+        this->Transplant(toDelete, toDelete->left);
+    }
+    else
+    {
+        y = this->Minimum(toDelete->right);
+        y_original_color = y->color;
+        x = y->right;
+        if( y != toDelete->right)
+        {
+            this->Transplant(y, y->right);
+            y->right = toDelete->right;
+            y->right->parent = y;
+        }
+        else
+            x->parent = y;
+        this->Transplant(toDelete, y);
+        y->left = toDelete->left;
+        y->left->parent = y;
+        y->color = toDelete->color;
+        if(y_original_color == BLACK)
+            this->FixDelete(x);
+    }
+}
+
 
 // Display
 void Red_Black_Tree::Display()
