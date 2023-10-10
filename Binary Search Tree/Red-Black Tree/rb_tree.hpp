@@ -60,9 +60,29 @@ public:
     // Delete
     void Delete(int);
 
+    //Display
+    void Display();
+
     // Destructor
     ~Red_Black_Tree();
 };
+
+//Constructor
+Red_Black_Tree::Red_Black_Tree()
+{
+    this->root = NIL;
+    this->_size = 0;
+    InitNIL();
+}
+
+Red_Black_Tree::Red_Black_Tree(int *arr, int size)
+{
+    this->root = NIL;
+    this->_size = 0;
+    InitNIL();
+    for (int i = 0; i < size; i++)
+        Insert(arr[i]);
+}
 
 void Red_Black_Tree::InitNIL()
 {
@@ -112,6 +132,23 @@ void Red_Black_Tree::RightRotation(Node *data)
         data->parent->right = temp;
     temp->right = data;
     data->parent = temp;
+}
+
+// Inorder
+void Red_Black_Tree::Inorder(Node *data)
+{
+    if (data != NIL)
+    {
+        Inorder(data->left);
+        std::cout << data->data << " ";
+        Inorder(data->right);
+    }
+}
+
+// Display
+void Red_Black_Tree::Display()
+{
+    Inorder(this->root);
 }
 
 #endif
