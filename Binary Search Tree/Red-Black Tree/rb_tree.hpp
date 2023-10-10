@@ -97,4 +97,21 @@ void Red_Black_Tree::LeftRotation(Node *data)
     data->parent = temp;
 }
 
+void Red_Black_Tree::RightRotation(Node *data)
+{
+    Node *temp = data->left;
+    data->left = temp->right;
+    if (temp->right != NIL)
+        temp->right->parent = data;
+    temp->parent = data->parent;
+    if (data->parent == NIL)
+        this->root = temp;
+    else if (data == data->parent->left)
+        data->parent->left = temp;
+    else
+        data->parent->right = temp;
+    temp->right = data;
+    data->parent = temp;
+}
+
 #endif
