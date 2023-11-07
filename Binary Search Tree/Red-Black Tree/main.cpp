@@ -21,6 +21,14 @@ int main()
         tree->Insert(random);
     }
 
+    /*
+    cout << "[";
+    cout << inorder
+    cout
+    cout
+    cout << "]";
+    */
+
     // Print the tree
 
     cout << "-------------------" << endl;
